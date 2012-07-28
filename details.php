@@ -1,35 +1,30 @@
 <?php 
 
 /**
- * This module allows for the base management of sports teams for a club. The
- * structure is sufficiently generic to allow any sport. It also adds a similar
- * base support for league identification more as a thoughtful design than a
- * smart feature (makes keeping teams in the same leagues easier).
- * I highly recommend you fetch memberships as part of your addon installation.
- * It will allow you to have team rosters with anything from basic players and
- * coaches to whatever your heart desires (I'm having cake bakers).
+ * Memberships introduction
+ * @todo Fill out this description.
  * @author Johannes L. Borresen
  * @website http://the.homestead.dk
- * @package teams
+ * @package memberships
  **/
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Primary module code. Version, table installations, sample data, and such.
- * @package places
+ * @package memberships
  */
-class Module_Teams extends Module {
+class Module_Memberships extends Module {
 
     /**
      * Version of the module. Follows semantic versioning when beyond major 1.
      */
-    public $version = '1.0.0';
+    public $version = '0.1.0';
 
     /**
      * Const reminder of the module's name. Can thus be referenced later.
      */
-    const MODULE_NAME='teams';
+    const MODULE_NAME='memberships';
 
     /**
      * We load up the settings model to have insert_many for easy, efficient

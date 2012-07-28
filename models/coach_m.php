@@ -1,14 +1,11 @@
 <?php
 
 /**
- * This module was built specifically with Danish volleyball leagues in mind,
- * but the abstraction should be distant enough to allow for practically any
- * sport that has a generic tournament structure, different leagues (or series,
- * or .... you know), players, coaches and a team description.
- *
+ * Memberships introduction
+ * @todo Fill out this description.
  * @author Johannes L. Borresen
  * @website http://the.homestead.dk
- * @package sports
+ * @package memberships
  **/
 
 require_once('sports_base.php');
@@ -19,8 +16,8 @@ require_once('sports_base.php');
  * I can see that it's necessary to add another mapping layer.
  * This is simply sports_coach_team handled internally by Coach_m
  * and Team_m - no reason to add a whole extra model for that stuff.
- * @package sports
- * @subpackage coaches
+ * @package memberships
+ * @subpackage roles
  */
 class Coach_m extends sports_base
 {

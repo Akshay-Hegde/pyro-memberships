@@ -1,14 +1,11 @@
 <?php
 
 /**
- * This module was built specifically with Danish volleyball leagues in mind,
- * but the abstraction should be distant enough to allow for practically any
- * sport that has a generic tournament structure, different leagues (or series,
- * or .... you know), players, coaches and a team description.
- *
+ * Memberships introduction
+ * @todo Fill out this description.
  * @author Johannes L. Borresen
  * @website http://the.homestead.dk
- * @package sports
+ * @package memberships
  **/
 
 require_once('sports_base.php');
@@ -19,8 +16,7 @@ require_once('sports_base.php');
  * allowing a profile to be on several teams at any time, even going so far as
  * to letting them stop on a team for a period and then start up again with a
  * new membership, keeping a historic record of time spent there.
- * @package sports
- * @subpackage memberships
+ * @package memberships
  */
 class Membership_m extends sports_base
 {

@@ -1,14 +1,11 @@
 <?php
 
 /**
- * This module was built specifically with Danish volleyball leagues in mind,
- * but the abstraction should be distant enough to allow for practically any
- * sport that has a generic tournament structure, different leagues (or series,
- * or .... you know), players, coaches and a team description.
- *
+ * Memberships introduction
+ * @todo Fill out this description.
  * @author Johannes L. Borresen
  * @website http://the.homestead.dk
- * @package sports
+ * @package memberships
  **/
 
 require_once('admin_base.php');
@@ -18,7 +15,7 @@ require_once('admin_base.php');
  * controller, owing to its role as a core reporting device.
  * @todo Consider what we can do to improve performance, or at least warn users
  * of overuse.
- * @package sports
+ * @package memberships
  * @subpackage memberships
  */
 class Admin_Memberships extends Admin_SportsBase
