@@ -11,17 +11,17 @@
 require_once('admin_base.php');
 
 /**
- * Admin controller for coaches.
+ * Admin controller for roles.
  * @package memberships
- * @subpackage coaches
+ * @subpackage roles
  */
-class Admin_Coaches extends Admin_SportsBase
+class Admin_Roles extends Admin_BaseController
 {
     /**
      * Used by the PyroCMS admin code to match shortcuts in details.php to
      * controllers' admin views.
      */
-    protected $section = 'coaches';
+    protected $section = 'memberships';
 
     /**
      * Basic controller constructor. Pulls in models, validation rules, assets.
@@ -32,47 +32,45 @@ class Admin_Coaches extends Admin_SportsBase
 
         // Load the required classes
         $this->load->model(array(
-            'coach_m',
-            'team_m',
+            'role_m',
+            'membership_m',
         ));
 		
 		// Set the validation rules.
         // For a coach, we only place the restriction that a user can't be two different coaches.
         $this->item_validation_rules = array(
             array(
-                'field' => 'profile_id',
-                'label' => lang('sports:coach:name'),
+                'field' => 'name',
+                'label' => lang('roles:name'),
                 'rules' => 'trim|required'),
+            ),
+            array(
+                'field' => 'slug',
+                'label' => lang('roles:slug'),
+                'rules' => 'trim|required|is_unique[roles.slug]'),
+            ),
+            array(
+                'field' => 'model',
+                'label' => lang('roles:model'),
+                'rules' => 'trim|required'),
+            ),
         );
-
-		// We'll set the partials and metadata here since they're used everywhere
-		$this->template->append_js('module::admin.js')
-						->append_css('module::admin.css');
 	}
 
 	/**
-     * Displays all coaches in a nice abbreviated list.
+     * Displays all roles for quick-access modification.
      * @param int $offset Pagination offset.
      * @todo Implement pagination.
      */
 	public function index($offset = 0)
 	{
-		$coaches = $this->coach_m->get_all();
-		
-        foreach ($coaches as $coach)
-        {
-            $coach->team_count = $this->coach_m->get_team_count($coach->id);
-        }
+        $roles = $this->role_m->get_all();
 
-        $this->data->coaches =& $coaches;
-
-		$this->template->title($this->module_details['name'])
-						->build('admin/coaches', $this->data);
+		$this->do_template('roles:roles', 'roles');
 	}
 
     /**
-     * Renders the view for creating coaches and handles submissions of the
-     * create form.
+     * Role creation.
      */
     public function create()
     {
@@ -84,34 +82,23 @@ class Admin_Coaches extends Admin_SportsBase
             // get rid of the btnAction item that tells us which button was clicked.
             // If we don't unset it MY_Model will try to insert it
             unset($_POST['btnAction']);
-            if (isset($_POST['user_name'])) unset($_POST['user_name']);
 
             // See if the model can create the record
-            if($this->coach_m->create($this->input->post()))
+            if($this->role_m->create($this->input->post()))
             {
                 // All good...
                 $this->session->set_flashdata('success', lang('success_label'));
-                redirect('admin/sports/coaches');
+                redirect('admin/memberships/roles');
             }
             // Something went wrong. Show them an error
             else
             {
                 $this->session->set_flashdata('error', lang('general_error_label'));
-                redirect('admin/sports/coaches/create');
+                redirect('admin/memberships/roles/create');
             }
         }
 
-        $users = $this->coach_m->get_all_non_coaches();
-        $this->data->user_list = array();
-        foreach ($users as $user)
-        {
-            $this->data->user_list[$user->id] = $user->display_name;
-        }
-        $this->data->all_teams = $this->get_teams_dropdown_array();
-        
-        // Build the view using sports/views/admin/team_create
-        $this->template->title($this->module_details['name'], lang('global:add'))
-                       ->build('admin/coaches_create', $this->data);
+        $this->do_template('roles:create', 'roles_create');
     }
 
     /**
@@ -121,7 +108,7 @@ class Admin_Coaches extends Admin_SportsBase
      */
     public function edit($id)
     {
-        $this->data = $this->coach_m->get($id);
+        $this->data = $this->role_m->get($id);
 
         $this->form_validation->set_rules($this->item_validation_rules);
 
@@ -131,36 +118,23 @@ class Admin_Coaches extends Admin_SportsBase
             // get rid of the btnAction item that tells us which button was clicked.
             // If we don't unset it MY_Model will try to insert it
             unset($_POST['btnAction']);
-            if ($_POST['user_name']) unset($_POST['user_name']);
 
             // See if the model can create the record
-            if($this->coach_m->update($id, $this->input->post()))
+            if($this->role_m->update($id, $this->input->post()))
             {
                 // All good...
                 $this->session->set_flashdata('success', lang('success_label'));
-                redirect('admin/sports/coaches');
+                redirect('admin/memberships/roles');
             }
             // Something went wrong. Show them an error
             else
             {
                 $this->session->set_flashdata('error', lang('general_error_label'));
-                redirect('admin/sports/coaches/create');
+                redirect('admin/memberships/roles/create');
             }
         }
 
-        $this->data->all_teams = $this->get_teams_dropdown_array();
-        
-        $cur_teams = $this->team_m->get_for_coach($id);
-        // Distill
-        $this->data->cur_teams = array();
-        foreach ($cur_teams as $team)
-        {
-            $this->data->cur_teams[$team->id] = $team->id;
-        }
-
-        // Build the view using sports/views/admin/team_create
-        $this->template->title($this->module_details['name'], lang('global:add'))
-                       ->build('admin/coaches_create', $this->data);
+        $this->do_template('roles:edit', 'roles_create');
     }
 
     /**
@@ -171,26 +145,8 @@ class Admin_Coaches extends Admin_SportsBase
      */
     public function delete($id)
     {
-        // Delete coach in db. coach_m should handle the links to teams.
-        $this->coach_m->delete($id);
-        redirect('admin/sports/coaches');
-    }
-
-    /**
-     * Preps an array of all teams in an HTML5 select-compatible array.
-     * @return Array key=team_id, value=team_name
-     */
-    protected function get_teams_dropdown_array()
-    {
-        $teams = $this->team_m->get_all();
-
-        // Distill
-        $ret = array();
-        foreach ($teams as $team)
-        {
-            $ret[$team->id] = $team->name;
-        }
-
-        return $ret;
+        // Delete coach in db. role_m should handle the links to teams.
+        $this->role_m->delete($id);
+        redirect('admin/memberships/roles');
     }
 }

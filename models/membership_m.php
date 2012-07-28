@@ -8,8 +8,6 @@
  * @package memberships
  **/
 
-require_once('sports_base.php');
-
 /**
  * A membership is a profile tied to a team for a period of time. This model
  * maps a multi-temporal many-to-many relationship between teams and users,
@@ -18,72 +16,27 @@ require_once('sports_base.php');
  * new membership, keeping a historic record of time spent there.
  * @package memberships
  */
-class Membership_m extends sports_base
+class Membership_m extends MY_Model
 {
 	/**
-	 * Bare constructor. As with all sports models, we prefix the table
-	 * name using something form internal.
+	 * Retrieves all profiles not currently tied to a specific group.
+	 * @param int $group Group id.
+	 * @return ActiveRecord result object.
+	 */
+	public function get_not_in_group($group)
+	{
+		return $this->db->where('group_id', $team)
+						->get()
+						->result();
+	}
+
+	/**
+	 * Retrieves all all 
+	 * @param type $role 
+	 * @param type $active 
 	 * @return type
 	 */
-	public function __construct()
-	{
-		parent::__construct();
-		$this->_table = $this->tables['memberships'];
-	}
-
-	/**
-	 * "Creating" a player is really a question of creating
-	 * a link between a team and a user. Simple.
-	 * @param int $team Team Id to connect to.
-	 * @param int $user User Id to connect to.
-	 * @return object New player id (!=user.id)
-	 */
-	public function create($team, $user)
-	{
-		return $this->insert(array('team_id' => $team,
-							'profile_id' => $user));
-	}
-
-	/**
-	 * Retrieves all profiles not currently tied to a specific team.
-	 * @param int $team Team id.
-	 * @return ActiveRecord result object.
-	 */
-	public function get_not_on_team($team)
-	{
-		// Task: get all profiles not tied to the given team.
-		// 1. get all ids in current team.
-		// 2. get all profiles not in that list.
-		// 3. return that result.
-
-		$members = $this->db->from($this->tables['memberships'])
-							->where('team_id', $team)
-							->get()
-							->result();
-
-		// Catch the empty set. No members on team, so return everyone.
-		if (empty($members)) return $this->db->get('profiles')->result();
-
-		$ids = array();
-		foreach ($members as $m)
-		{
-			$ids[] = $m->id;
-		}
-
-		return $this->db->from('profiles')
-					    ->where_not_in('id', $ids)
-				 	    ->get()
-				 	    ->result();
-	}
-
-	/**
-	 * Retrieves all memberships for a particular profile.
-	 * @param int $profile Profile.
-	 * @param bool $active If True, only active memberships (unended) are
-	 * returned. If false, all memberships are returned.
-	 * @return ActiveRecord result object.
-	 */
-	public function get_for_profile($profile, $active = true)
+	public function get_profiles_in_group($role, $active = false)
 	{
 		return $this->db->where('profile_id', $profile)
 						->where('end_date'.($active ? '' : '!='), null) // Adds the "NOT" if active was false.
