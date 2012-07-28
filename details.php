@@ -44,51 +44,42 @@ class Module_Memberships extends Module {
      */
     public function info()
     {
+        $shortcuts = array(
+                        array(
+                            'name'  => 'memberships:create',
+                            'uri'   => 'admin/memberships/create',
+                            'class' => 'add',
+                        ),
+                        array(
+                            'name'  => 'roles:create',
+                            'uri'   => 'admin/roles/create',
+                            'class' => 'add',
+                        ),
+                    );
+
 		return array(
 			'name' => array(
-				'en' => 'Teams',
-				'da' => 'Hold',
+				'en' => 'Memberships',
+				'da' => 'Medlemskaber',
 			),
 			'description' => array(
-				'en' => 'A tiny module for basic sports team management. Dependency for: memberships',
-				'da' => 'Et lille modul til administration af sportshold. Afhænighed for: memberships',
+				'en' => 'A generic group and membership module. Recommendation for: Teams',
+				'da' => 'Et modul til gruppe- og medlemsskabsadministration. Anbefalet til  modulet Hold',
 			),
 			'frontend' => true,
 			'backend' => true,
 			'menu' => 'content',
-            'roles' => array('create_team', 'edit_team', 'delete_team', 'create_league', 'delete_league', 'edit_league'),
+            'roles' => array('create_role', 'create_membership', 'edit_role', 'edit_membership', 'delete_role', 'delete_membership'),
 			'sections' => array(
-                'teams' => array(
-                    'name'  => 'teams:teams', // These are translated from your language file
-                    'uri'   => 'admin/teams',
-                    'shortcuts' => array(
-                        array(
-                            'name'  => 'teams:create',
-                            'uri'   => 'admin/teams/create',
-                            'class' => 'add',
-                        ),
-                        array(
-                            'name'  => 'leagues:create',
-                            'uri'   => 'admin/leagues/create',
-                            'class' => 'add',
-                        ),
-                    ),
+                'memberships' => array(
+                    'name'  => 'memberships:memberships', // These are translated from your language file
+                    'uri'   => 'admin/memberships',
+                    'shortcuts' => $shortcuts,
                 ),
-                'leagues' => array(
-                    'name'  => 'leagues:leagues', // These are translated from your language file
-                    'uri'   => 'admin/leagues',
-                    'shortcuts' => array(
-                        array(
-                            'name'  => 'teams:create',
-                            'uri'   => 'admin/teams/create',
-                            'class' => 'add',
-                        ),
-                        array(
-                            'name'  => 'leagues:create',
-                            'uri'   => 'admin/leagues/create',
-                            'class' => 'add',
-                        ),
-                    ),
+                'roles' => array(
+                    'name'  => 'roles:roles', // These are translated from your language file
+                    'uri'   => 'admin/roles',
+                    'shortcuts' => $shortcuts,
                 ),
             ),
 		);
@@ -115,18 +106,57 @@ class Module_Memberships extends Module {
     }
 
     /**
-     * Installs the teams table.
+     * Installs the memberships table.
      * Primary key  : id(int)
-     * name         : name of the team. This can be long and pretty.
-     * slug         : short name of the team. Short, to the point. Unique.
-     * description  : a longer, free-form description of the team. Optional.
-     * league_id    : foreign key to the league that the team is in.
-     * Note that the league needn't be an actual LEAGUE. It might be a series,
-     * or a championship or a whatever they might call it. It's simply a
-     * grouping of the levels within the sports, from amateurs to pros.
+     * start_date   : starting date of the membership.
+     * end_date     : last date of the membership.
+     * group_id     : foreign key to the group the profile is tied to.
+     * profile_id   : foreign key to the profile tied to a group.
+     * role_id      : foreign key to the role that the membership represents.
      * @return boolean True on success. False otherwise.
      * */
-    public function install_teams()
+    public function install_memberships()
+    {
+        $table = array(
+            'id' => array(
+                'type'          => 'INT',
+                'constraint'    => '11',
+                'auto_increment'=> true,
+            ),
+            'start_date' => array(
+                'type' => 'DATE',
+            ),
+            'end_date' => array(
+                'type' => 'DATE',
+                'null' => true,
+            ),
+            'profile_id' => array(
+                'type'          => 'INT',
+                'constraint'    => '11',
+            ),
+            'group_id' => array(
+                'type'          => 'INT',
+                'constraint'    => '11',
+                'null'          => 'true'
+            ),
+            'role_id' => array(
+                'type'          => 'INT',
+                'constraint'    => '11',
+                'null'          => 'true'
+            ),
+        );
+
+        return $this->install_table('memberships', $table);
+    }
+
+    /**
+     * Installs the roles table.
+     * Primary key  : id(int)
+     * name         : name of the role.
+     * model        : name of the model that the role ties memberships to.
+     * @return boolean True on success. False otherwise.
+     * */
+    public function install_roles()
     {
         $table = array(
             'id' => array(
@@ -138,75 +168,51 @@ class Module_Memberships extends Module {
                 'type' => 'TEXT',
             ),
             'slug' => array(
-                'type' => 'TEXT',   
+                'type' => 'TEXT',
             ),
-            'description' => array(
-                'type'  => 'TEXT',
-                'null'  => true,
-            ),
-            'league_id' => array(
-                'type'          => 'INT',
-                'constraint'    => '11',
-                'null'          => 'true'
-            ),
-        );
-
-        return $this->install_table('teams', $table);
-    }
-
-    /**
-     * Installs the leagues table.
-     * Primary key  : id(int)
-     * name         : name of the league.
-     * @return boolean True on success. False otherwise.
-     * */
-    public function install_leagues()
-    {
-        $table = array(
-            'id' => array(
-                'type'          => 'INT',
-                'constraint'    => '11',
-                'auto_increment'=> true,
-            ),
-            'name' => array(
+            'model' => array(
                 'type' => 'TEXT',
             ),
         );
 
-        return $this->install_table('leagues', $table);
+        return $this->install_table('roles', $table);
     }
 
     /**
      * Quick insert of a new location.
      * @param string $name Name of the location, recognisable.
-     * @param string $add Address location. Should be unique to a Google maps
-     * search.
-     * @param string $desc Arbitrary long-winded description of the location.
-     * @return int New location id.
+     * @param string $model Slug of the model the role belongs to.
+     * @return int New role id.
      */
-    private function insert_league($name)
+    private function insert_role($name, $slug, $model)
     {
-        $this->db->insert('leagues', array(
+        $this->db->insert('roles', array(
             'name' => $name,
+            'slug' => $slug,
+            'model' => $model,
         ));
         return $this->db->insert_id();
     }
 
     /**
      * Quick insert of a new location.
-     * @param string $name Name of the location, recognisable.
-     * @param string $slug Unique short form of the name.
-     * @param string $league Foreign key to the team's league.
-     * @param string $desc Team description - freeform, optional.
-     * @return int New location id.
+     * @param int $profile Foreign key to the profiles table.
+     * @param int $group Foreign key to the relevant model's table.
+     * @param int $role Foreign key the role of this membership.
+     * @param date $start Starting date. If omitted, today is used.
+     * @param date $end Ending date.
+     * @return int New membership id.
      */
-    private function insert_team($name, $slug, $league = null, $desc = null)
+    private function insert_membership($profile, $group, $role, $start = null, $end = null)
     {
-        $this->db->insert('teams', array(
-            'name' => $name,
-            'slug' => $slug,
-            'league_id' => $league,
-            'description' => $desc,
+        if (!isset($start)) $start = date('Y-m-d');
+
+        $this->db->insert('memberships', array(
+            'profile_id' => $profile,
+            'group_id'   => $group,
+            'role_id'    => $role,
+            'start_date' => $start,
+            'end_date'   => $end,
         ));
         return $this->db->insert_id();
     }
@@ -217,40 +223,11 @@ class Module_Memberships extends Module {
      */
     private function insert_sample_data()
     {
-        $ds = $this->insert_league("Danmarksserien");
-        $ed = $this->insert_league("Elitedivision");
+        $devs = $this->insert_role('Developer', 'developer', 'modules');
 
-        $this->insert_team('Herre 3', 'hs3', $ds, 'My team!');
-        $this->insert_team('Herre U21', 'hy', $ds, 'My buddy\'s team.');
-        $this->insert_team('Herre 1', 'hs1', $ed, 'The best team.');
+        $this->insert_membership(1, 3, $devs);
 
         return true;
-    }
-
-    /**
-     * Inserts all the various settings into th CP. If you want to add a new possible
-     * parameter to the Google Maps tags, add a setting with a slug prefixed with
-     * 'places_tag_' for automatic detection.
-     */
-    private function install_settings()
-    {
-        $success  =$this->settings_m->insert_many(array(
-            array(
-                'slug' => 'teams_use_simple_frontend',
-                'title' => 'Demo frontend',
-                'description' => 'Basically enables or disables a frontend view that presents a team ',
-                '`default`' => '1',
-                '`value`' => '1',
-                'type' => 'radio',
-                'is_required' => 0,
-                'is_gui' => 1,
-                'options' => '1=Enabled|0=Disabled',
-                'module' => 'teams',
-            ),
-        ));
-
-        if (!$success) return false;
-        else return true;
     }
 
     /**
@@ -260,13 +237,9 @@ class Module_Memberships extends Module {
      */
     public function install()
     {
-    	// Remove any previous settings.
-        $this->db->delete('settings', array('module' => self::MODULE_NAME));
-
-        if (! $this->install_teams()) die("Table install failed.");
-        if (! $this->install_leagues()) die("Table install failed.");
+        if (! $this->install_roles()) die("Role table install failed.");
+        if (! $this->install_memberships()) die("Membership table install failed.");
         if (! $this->insert_sample_data()) die ("Sample data could not be inserted.");
-        if (! $this->install_settings()) die ("Failed to install settings.");
         
         return true;
     }
@@ -278,10 +251,8 @@ class Module_Memberships extends Module {
      */
     public function uninstall()
     {
-        $this->dbforge->drop_table('teams');
-        $this->dbforge->drop_table('leagues');
-
-        $this->db->delete('settings', array('module' => self::MODULE_NAME));
+        $this->dbforge->drop_table('roles');
+        $this->dbforge->drop_table('memberships');
 
         return true;
     }
@@ -311,6 +282,6 @@ class Module_Memberships extends Module {
     public function help()
     {
         // Return a string containing help info
-        return "See the Github repository at http://www.github.com/Tellus/pyro-places for usage information.";
+        return "See the Github repository at http://www.github.com/Tellus/pyro-memberships for usage information.";
     }
 }
