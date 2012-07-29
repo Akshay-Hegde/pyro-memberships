@@ -11,8 +11,24 @@
 	
 		<ul>
 			<li class="<?php echo alternator('', 'even'); ?>">
-				<label for="name"><?php echo lang('leagues:name'); ?> <span>*</span></label>
-				<div class="input"><?php echo form_input('name', set_value('name', $name), 'class="width-15"'); ?></div>
+				<label for="name"><?php echo lang('roles:name'); ?> <span>*</span></label>
+				<div class="input"><?php echo form_input('name', isset($name) ? $name : '', 'class="width-15"'); ?></div>
+			</li>
+			<li class="<?php echo alternator('', 'even'); ?>">
+				<label for="slug"><?php echo lang('roles:slug'); ?> <span>*</span></label>
+				<div class="input"><?php echo form_input('slug', isset($slug) ? $slug : '', 'class="width-15"'); ?></div>
+			</li>
+			<li class="<?php echo alternator('', 'even'); ?>">
+				<label for="model"><?php echo lang('roles:model'); ?> <span>*</span></label>
+				<div class="input"><?php echo form_input('model', isset($model) ? $model : '', 'class="width-15"'); ?></div>
+			</li>
+			<li class="<?php echo alternator('', 'even'); ?>">
+				<label for="key_field"><?php echo lang('roles:key_field'); ?> <span>*</span></label>
+				<div class="input"><?php echo form_input('key_field', isset($key_field) ? $key_field : '', 'class="width-15"'); ?></div>
+			</li>
+			<li class="<?php echo alternator('', 'even'); ?>">
+				<label for="value_field"><?php echo lang('roles:value_field'); ?> <span>*</span></label>
+				<div class="input"><?php echo form_input('value_field', isset($value_field) ? $value_field : '', 'class="width-15"'); ?></div>
 			</li>
 		</ul>
 		

@@ -9,15 +9,16 @@
  **/
 
 /**
- * A membership is a profile tied to a team for a period of time. This model
- * maps a multi-temporal many-to-many relationship between teams and users,
- * allowing a profile to be on several teams at any time, even going so far as
- * to letting them stop on a team for a period and then start up again with a
- * new membership, keeping a historic record of time spent there.
+ * The core membership model. Simple CRUD.
  * @package memberships
  */
 class Membership_m extends MY_Model
 {
+    public function create($data)
+    {
+        return $this->insert($data);
+    }
+
 	/**
 	 * Retrieves all profiles not currently tied to a specific group.
 	 * @param int $group Group id.

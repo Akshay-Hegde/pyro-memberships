@@ -1,25 +1,26 @@
 <section class="title">
-	<h4><?php echo lang('leagues:leagues'); ?></h4>
+	<h4><?php echo lang('roles:roles'); ?></h4>
 </section>
 
 <section class="item">
-	<?php echo form_open('admin/leagues/delete');?>
+	<?php echo form_open('admin/roles/delete');?>
 	
-	<?php if (!empty($leagues)): ?>
+	<?php if (!empty($roles)): ?>
 	
 		<table>
 			<thead>
 			    <!-- Header row -->
 				<tr>
 					<th><?php echo form_checkbox(array('name' => 'action_to_all', 'class' => 'check-all'));?></th>
-                    <th><?php echo lang('leagues:id'); ?></th>
-					<th><?php echo lang('leagues:name'); ?></th>
-					<th>Actions</th>
+                    <th><?php echo lang('roles:id'); ?></th>
+					<th><?php echo lang('roles:name'); ?></th>
+					<th><?php echo lang('roles:model'); ?></th>
+					<th></th>
 				</tr>
 			</thead>
 			<tfoot>
 				<tr>
-					<td colspan="2">
+					<td colspan="3">
 						<div class="inner"><?php $this->load->view('admin/partials/pagination'); ?></div>
 					</td>
 				</tr>
@@ -27,17 +28,18 @@
 			<tbody>
 				<?
 				    // Loop through each team here.
-				    foreach( $leagues as $league ):
+				    foreach( $roles as $role ):
 			    ?>
 				<tr>
-					<td><?php echo form_checkbox('action_to[]', $league->id); ?></td>
-					<td><?php echo $league->id; ?></td>
-					<td><?php echo $league->name; ?></td>
+					<td><?php echo form_checkbox('action_to[]', $role->id); ?></td>
+					<td><?php echo $role->id; ?></td>
+					<td><?php echo $role->name; ?></td>
+					<td><?php echo $role->model; ?></td>
 					<td class="actions">
 						<?php echo
-						anchor('leagues/'.$league->id, lang('global:view'), 'class="button" target="_blank"').' '.
-						anchor('admin/leagues/edit/'.$league->id, lang('global:edit'), 'class="button"').' '.
-						anchor('admin/leagues/delete/'.$league->id, 	lang('global:delete'), array('class'=>'button')); ?>
+						anchor('memberships/roles/'.$role->id, lang('global:view'), 'class="button" target="_blank"').' '.
+						anchor('admin/memberships/roles/edit/'.$role->id, lang('global:edit'), 'class="button"').' '.
+						anchor('admin/memberships/roles/delete/'.$role->id, 	lang('global:delete'), array('class'=>'button')); ?>
 					</td>
 				</tr>
 				<?php endforeach; ?>

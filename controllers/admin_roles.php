@@ -42,17 +42,17 @@ class Admin_Roles extends Admin_BaseController
             array(
                 'field' => 'name',
                 'label' => lang('roles:name'),
-                'rules' => 'trim|required'),
+                'rules' => 'trim|required',
             ),
             array(
                 'field' => 'slug',
                 'label' => lang('roles:slug'),
-                'rules' => 'trim|required|is_unique[roles.slug]'),
+                'rules' => 'trim|required|is_unique[roles.slug]',
             ),
             array(
                 'field' => 'model',
                 'label' => lang('roles:model'),
-                'rules' => 'trim|required'),
+                'rules' => 'trim|required',
             ),
         );
 	}
@@ -64,7 +64,7 @@ class Admin_Roles extends Admin_BaseController
      */
 	public function index($offset = 0)
 	{
-        $roles = $this->role_m->get_all();
+        $this->data->roles = $this->role_m->get_all();
 
 		$this->do_template('roles:roles', 'roles');
 	}

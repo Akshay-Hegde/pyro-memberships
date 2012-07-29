@@ -17,5 +17,8 @@
  */
 class Role_m extends MY_Model
 {
-
+	public function create($data)
+	{
+		return $this->insert($data);
+	}
 }

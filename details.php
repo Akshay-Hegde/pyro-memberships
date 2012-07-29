@@ -19,7 +19,7 @@ class Module_Memberships extends Module {
     /**
      * Version of the module. Follows semantic versioning when beyond major 1.
      */
-    public $version = '0.1.0';
+    public $version = '0.2.0';
 
     /**
      * Const reminder of the module's name. Can thus be referenced later.
@@ -52,7 +52,7 @@ class Module_Memberships extends Module {
                         ),
                         array(
                             'name'  => 'roles:create',
-                            'uri'   => 'admin/roles/create',
+                            'uri'   => 'admin/memberships/roles/create',
                             'class' => 'add',
                         ),
                     );
@@ -78,7 +78,7 @@ class Module_Memberships extends Module {
                 ),
                 'roles' => array(
                     'name'  => 'roles:roles', // These are translated from your language file
-                    'uri'   => 'admin/roles',
+                    'uri'   => 'admin/memberships/roles',
                     'shortcuts' => $shortcuts,
                 ),
             ),
@@ -137,7 +137,7 @@ class Module_Memberships extends Module {
             'group_id' => array(
                 'type'          => 'INT',
                 'constraint'    => '11',
-                'null'          => 'true'
+                'null'          => 'true',
             ),
             'role_id' => array(
                 'type'          => 'INT',
@@ -173,6 +173,12 @@ class Module_Memberships extends Module {
             'model' => array(
                 'type' => 'TEXT',
             ),
+            'key_field' => array(
+                'type' => 'TEXT',
+            ),
+            'value_field' => array(
+                'type' => 'TEXT',
+            ),
         );
 
         return $this->install_table('roles', $table);
@@ -184,12 +190,14 @@ class Module_Memberships extends Module {
      * @param string $model Slug of the model the role belongs to.
      * @return int New role id.
      */
-    private function insert_role($name, $slug, $model)
+    private function insert_role($name, $slug, $model, $key_field = 'id', $value_field = 'name')
     {
         $this->db->insert('roles', array(
             'name' => $name,
             'slug' => $slug,
             'model' => $model,
+            'key_field' => $key_field,
+            'value_field' => $value_field,
         ));
         return $this->db->insert_id();
     }
@@ -223,7 +231,7 @@ class Module_Memberships extends Module {
      */
     private function insert_sample_data()
     {
-        $devs = $this->insert_role('Developer', 'developer', 'modules');
+        $devs = $this->insert_role('Developer', 'developer', 'module');
 
         $this->insert_membership(1, 3, $devs);
 

@@ -1,50 +1,49 @@
 <section class="title">
-	<h4><?php echo lang('teams:teams'); ?></h4>
+	<h4><?php echo lang('memberships:memberships'); ?></h4>
 </section>
 
 <section class="item">
-	<?php echo form_open('admin/teams/delete');?>
+	<?php echo form_open('admin/memberships/delete');?>
 	
-	<?php if (!empty($teams)): ?>
+	<?php if (!empty($memberships)): ?>
 
 		<table>
 			<thead>
 			    <!-- Header row -->
 				<tr>
 					<th><?php echo form_checkbox(array('name' => 'action_to_all', 'class' => 'check-all'));?></th>
-                    <th><?php echo lang('teams:id'); ?></th>
-					<th><?php echo lang('teams:name'); ?></th>
-                    <th><?php echo lang('teams:slug'); ?></th>
-                    <?php if (isset($extra_enabled['memberships'])) : ?>
-                    <th><?php echo lang('teams:head-coach'); ?></th>
-                    <?php endif; ?>
-                    <th><?php echo lang('leagues:league'); ?></th>
+                    <th><?php echo lang('memberships:id'); ?></th>
+                    <th><?php echo lang('profile_display_name'); ?></th>
+					<th><?php echo lang('roles:name'); ?></th>
+                    <th><?php echo lang('memberships:start_date'); ?></th>
+                    <th><?php echo lang('memberships:end_date'); ?></th>
 					<th></th>
 				</tr>
 			</thead>
 			<tfoot>
 				<tr>
-					<td colspan="5">
+					<td colspan="7">
 						<div class="inner"><?php $this->load->view('admin/partials/pagination'); ?></div>
 					</td>
 				</tr>
 			</tfoot>
 			<tbody>
-				<?php foreach($teams as $team ): ?>
+				<?php foreach($memberships as $mem): ?>
 				<tr>
-					<td><?php echo form_checkbox('action_to[]', $team->id); ?></td>
-                    <td><?php echo $team->id; ?></td>
-					<td><?php echo $team->name; ?></td>
-					<td><?php echo $team->slug; ?></td>
-					<?php if (isset($extra_enabled['memberships'])) : ?>
-					<td><?php echo $team->head_coach->display_name; ?></td>
-					<?php endif; ?>
-					<td><?php echo $team->league->name; ?></td>
+					<td><?php echo form_checkbox('action_to[]', $mem->id); ?></td>
+                    <td><?php echo $mem->id; ?></td>
+                    <td class="label flat <?php echo $mem->status_color; ?>"><?php echo $mem->profile->display_name; ?></td>
+                    <td><?php echo $mem->role->name; ?></td>
+					<td><?php echo $mem->start_date; ?></td>
+					<td>
+						<?php echo !isset($mem->end_date) ? '<i class="icon-remove"></i>' : ''; ?>
+						<?php echo $mem->end_date; ?>
+					</td>
 					<td class="actions">
 						<?php echo
-						anchor('teams/'.$team->id, lang('global:view'), 'class="button" target="_blank"').' '.
-						anchor('admin/teams/edit/'.$team->id, lang('global:edit'), 'class="button"').' '.
-						anchor('admin/teams/delete/'.$team->id, 	lang('global:delete'), array('class'=>'button')); ?>
+						anchor('memberships/'.$mem->id, 'Report', 'class="button" target="_blank"').' '.
+						anchor('admin/memberships/edit/'.$mem->id, lang('global:edit'), 'class="button"').' '.
+						anchor('admin/memberships/delete/'.$mem->id, 	lang('global:delete'), array('class'=>'button')); ?>
 					</td>
 				</tr>
 				<?php endforeach; ?>

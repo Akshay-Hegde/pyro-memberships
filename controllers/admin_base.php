@@ -29,8 +29,8 @@ abstract class Admin_BaseController extends Admin_Controller
 
         // We use this to get coaches for the teams rather than just numbers.
 		$this->lang->load(array(
-			'teams',
-			'leagues',
+			'roles',
+			'memberships',
 		));
 	}
 

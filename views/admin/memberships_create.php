@@ -1,38 +1,49 @@
 <section class="title">
 	<!-- We'll use $this->method to switch between sample.create & sample.edit -->
-	<h4><?php echo lang('teams:'.$this->method); ?></h4>
+	<h4><?php echo lang('memberships:'.$this->method); ?></h4>
 </section>
 
 <section class="item">
 
 	<?php echo form_open_multipart($this->uri->uri_string(), 'class="crud"'); ?>
+	<?php $dis = $this->method == 'edit'; ?>
 		
 		<div class="form_inputs">
 
 		<ul>
 			<li class="<?php echo alternator('', 'even'); ?>">
-				<label for="name"><?php echo lang('teams:name'); ?> <span>*</span></label>
-				<div class="input"><?php echo form_input('name', set_value('name', $name), 'class="width-15"'); ?></div>
+				<label for="profile_id"><?php echo lang('memberships:profile'); ?> <span>*</span></label>
+				<?php if (!$dis) : ?>
+					<div class="input"><?php echo form_dropdown('profile_id', $profiles , isset($profile_id) ? $profile_id : 0, 'class="width-15" '.$dis); ?></div>
+				<?php else : ?>
+					<div class="input"><?php echo form_input('profile_id', set_value('profile_id', $profile->display_name) , 'class="width-15" disabled="disabled"'); ?></div>
+				<?php endif ?>
+			</li>
+
+			<?php if ($dis) : ?>
+			<li class="<?php echo alternator('', 'even'); ?>">
+				<label for="group_id"><?php echo lang('memberships:group_id'); ?> <span>*</span></label>
+				<div class="input"><?php echo form_dropdown('group_id', $groups , isset($group_id) ? $group_id : 0, 'class="width-15" '.$dis); ?></div>
+			</li>
+			<?php endif ?>
+
+			<li class="<?php echo alternator('', 'even'); ?>">
+				<label for="role_id"><?php echo lang('roles:role'); ?> <span>*</span></label>
+				<?php if (!$dis) : ?>
+					<div class="input"><?php echo form_dropdown('role_id', $roles , isset($role_id) ? $role_id : 0, 'class="width-15"'); ?></div>
+				<?php else : ?>
+					<div class="input"><?php echo form_input('role_id', set_value('role_id', $role->name) , 'class="width-15" disabled="disabled"'); ?></div>
+				<?php endif ?>
 			</li>
 
 			<li class="<?php echo alternator('', 'even'); ?>">
-				<label for="slug"><?php echo lang('teams:slug'); ?> <span>*</span></label>
-				<div class="input"><?php echo form_input('slug', set_value('slug', $slug), 'class="width-15"'); ?></div>
+				<label for="start_date"><?php echo lang('memberships:start_date'); ?> <span>*</span></label>
+				<div class="input"><?php echo form_input('start_date', set_value('start_date', isset($start_date) ? $start_date : date('Y-m-d')), 'class="width-15" '.$dis); ?></div>
 			</li>
 
 			<li class="<?php echo alternator('', 'even'); ?>">
-				<label for="league_id"><?php echo lang('leagues:league'); ?> <span>*</span></label>
-				<div class="input"><?php echo form_dropdown('league_id', $league_list , isset($league_id) ? $league_id : 0, 'class="width-15"'); ?></div>
-			</li>
-
-			<li class="<?php echo alternator('', 'even'); ?>">
-				<label for="team_image"><?php echo lang('teams:photo'); ?></label>
-				<div class="input">Photo feature WIP</div>
-			</li>
-
-			<li class="<?php echo alternator('', 'even'); ?>">
-				<label for="description"><?php echo lang('teams:description'); ?> </label>
-				<div class="input"><?php echo form_textarea('description', set_value('description', isset($description) ? $description : ''), 'class="width-15 wysiwyg-simple"'); ?></div>
+				<label for="end_date"><?php echo lang('memberships:end_date'); ?></label>
+				<div class="input"><?php echo form_input('end_date', set_value('end_date', isset($end_date) ? $end_date : null), 'class="width-15"'); ?></div>
 			</li>
 		</ul>
 
